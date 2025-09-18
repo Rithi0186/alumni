@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Portal - Alumni</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --teal: #1abc9c;
+            --orange: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+        }
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--secondary);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--teal);
+        }
+
+        nav ul { display: flex; }
+        nav ul li { margin-left: 20px; }
+        nav ul li a {
+            color: white;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--teal);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Page Content Styles */
+        .page-content { display: none; padding: 30px 0; }
+        .active-page { display: block; }
+        
+        .section-title {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        .section-title h2 { font-size: 1.8rem; }
+        .section-title p { color: #777; }
+
+        /* --- HOME PAGE STYLES --- */
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 25px;
+            align-items: start;
+        }
+        
+        .home-left-sidebar { position: sticky; top: 100px; }
+        .home-left-sidebar .card { margin-bottom: 25px; }
+        .home-sidebar-card h4 {
+            font-weight: 600; margin-bottom: 15px; color: var(--primary);
+            padding-bottom: 10px; border-bottom: 1px solid #eee; font-size: 1.1rem;
+        }
+        .home-sidebar-card ul li { margin-bottom: 12px; }
+        .home-sidebar-card ul a {
+            color: #555; font-weight: 500; transition: var(--transition);
+            display: flex; align-items: center;
+        }
+        .home-sidebar-card ul a:hover { color: var(--secondary); }
+        .home-sidebar-card ul i { margin-right: 12px; width: 20px; color: var(--secondary); }
+        .filter-btn-list { display: flex; flex-direction: column; gap: 10px; }
+        .filter-btn {
+            width: 100%; padding: 10px; border: none; background: none;
+            border-radius: 8px; text-align: left; font-weight: 500;
+            cursor: pointer; transition: var(--transition); font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+        .filter-btn:hover { background: #f0f2f5; }
+        .filter-btn.active { background-color: var(--secondary); color: white; }
+        .create-post-card { margin-bottom: 25px !important; }
+        .create-post-body { display: flex; align-items: flex-start; gap: 15px; }
+        .create-post-profile-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .create-post-content { flex-grow: 1; }
+        .create-post-content textarea {
+            width: 100%; border: 1px solid #eee; padding: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; resize: vertical;
+            border-radius: var(--border-radius); min-height: 80px; margin-bottom: 15px;
+        }
+        .create-post-actions { display: flex; justify-content: space-between; align-items: center; }
+        .post-action-buttons button {
+            background: none; border: none; color: #555; font-size: 1.2rem;
+            cursor: pointer; margin-right: 15px; transition: var(--transition);
+        }
+        .post-action-buttons button:hover { color: var(--secondary); }
+        .feed-post { margin-bottom: 20px; }
+        .post-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .post-header .profile-img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
+        .post-user-info h5 { font-weight: 600; margin: 0; line-height: 1.2; }
+        .post-user-info p { color: #777; font-size: 0.85rem; margin: 0; }
+        .post-content .post-text { margin-bottom: 15px; }
+        .post-content .post-image-container {
+            width: 100%; max-height: 400px; border-radius: var(--border-radius);
+            overflow: hidden; margin-top: 10px;
+        }
+        .post-content .post-image-container img { width: 100%; height: 100%; object-fit: cover; }
+        .post-footer {
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid #eee; padding-top: 8px; margin-top: 15px;
+        }
+        .post-footer-btn {
+            background: none; border: none; color: #5f6368; font-weight: 600;
+            cursor: pointer; padding: 10px 15px; border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-family: 'Poppins', sans-serif; display: flex; align-items: center;
+            font-size: 0.9rem;
+        }
+        .post-footer-btn:hover { background-color: #f0f2f5; color: var(--primary); }
+        .post-footer-btn.active { color: var(--secondary); }
+        .post-footer-btn i { margin-right: 8px; font-size: 1.2rem; line-height: 1; }
+
+        /* --- CHATROOM SECTION STYLES --- */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            height: calc(100vh - 200px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            background: white;
+            overflow: hidden;
+        }
+        .chat-sidebar { background: #f8f9fa; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+        .chat-main { display: flex; flex-direction: column; }
+        .chat-tabs { display: flex; border-bottom: 1px solid #e0e0e0; }
+        .chat-tab {
+            flex: 1; padding: 15px; cursor: pointer;
+            transition: var(--transition); font-weight: 600; color: #555;
+            text-align: center; border-bottom: 3px solid transparent;
+        }
+        .chat-tab.active { border-bottom: 3px solid var(--teal); color: var(--teal); }
+        .chat-user-list { flex: 1; overflow-y: auto; }
+        .chat-user {
+            display: flex; align-items: center; padding: 12px 15px;
+            cursor: pointer; transition: var(--transition); border-left: 4px solid transparent;
+        }
+        .chat-user:hover { background: #e9f5ff; }
+        .chat-user.active { background: #e1f0fa; border-left: 4px solid var(--secondary); }
+        .chat-user .profile-img { width: 45px; height: 45px; font-size: 1.2rem; margin-right: 15px; border-radius: 50%; }
+        .chat-user-info h5 { font-weight: 600; margin: 0; font-size: 0.95rem; }
+        .chat-user-info p { font-size: 0.8rem; color: #777; margin: 0; }
+        .chat-header {
+            padding: 15px 20px; background: #fff; color: var(--primary);
+            display: flex; align-items: center; border-bottom: 1px solid #e0e0e0;
+        }
+        .chat-header h4 { font-size: 1.2rem; font-weight: 600; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f5f8fa; display: flex; flex-direction: column; }
+        .message { margin-bottom: 15px; max-width: 75%; display: flex; flex-direction: column; }
+        .message.received { align-self: flex-start; }
+        .message.sent { align-self: flex-end; }
+        .message-content { padding: 10px 15px; border-radius: 18px; font-size: 0.95rem; }
+        .received .message-content { background: #e9ecef; border-top-left-radius: 4px; }
+        .sent .message-content { background: var(--secondary); color: white; border-top-right-radius: 4px; }
+        .message-sender { font-weight: 600; font-size: 0.8rem; margin-bottom: 5px; color: #555; padding: 0 5px; }
+        .message-time { font-size: 0.75rem; color: #999; margin-top: 5px; padding: 0 5px; }
+        .sent .message-time { align-self: flex-end; }
+        .received .message-time { align-self: flex-start; }
+        .chat-input { display: flex; padding: 15px; background: white; border-top: 1px solid #e0e0e0; align-items: center; }
+        .chat-input input {
+            flex: 1; padding: 12px 18px; border: 1px solid #ddd;
+            border-radius: 25px; margin-right: 10px; font-family: 'Poppins', sans-serif; font-size: 1rem;
+        }
+        .chat-input input:focus { outline: none; border-color: var(--secondary); }
+        .chat-content { display: none; flex-direction: column; flex: 1; }
+        .chat-content.active { display: flex; }
+
+        /* --- PROFILE PAGE STYLES --- */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+        .profile-sidebar .card, .profile-main .card { margin-bottom: 25px; }
+        .profile-summary-card { text-align: center; }
+        .profile-summary-card .profile-pic {
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; margin: 0 auto 15px; border: 4px solid var(--teal);
+        }
+        .profile-summary-card h3 { font-size: 1.5rem; margin-bottom: 5px; color: var(--primary); }
+        .profile-summary-card .batch-info { font-size: 0.9rem; color: #777; margin-bottom: 8px; }
+        .profile-summary-card .job-title { font-size: 1rem; font-weight: 500; margin-bottom: 15px; }
+        .profile-social-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .profile-social-links a { color: #555; font-size: 1.2rem; transition: var(--transition); }
+        .profile-social-links a:hover { color: var(--secondary); }
+        .profile-summary-card .btn { width: 100%; }
+        .mentor-status-card h4 { font-size: 1.1rem; margin-bottom: 10px; }
+        .mentor-status-card p { font-size: 0.9rem; color: #777; margin-bottom: 15px; }
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        .toggle-switch input { display: none; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 22px; width: 22px;
+            left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(30px); }
+        .profile-main h3 {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 1.4rem; color: var(--primary); margin-bottom: 15px;
+        }
+        .profile-main .edit-link { font-size: 0.9rem; font-weight: 500; }
+        .profile-main .edit-link i { margin-right: 5px; }
+        .profile-main .about-text { line-height: 1.8; }
+        .request-count {
+            background-color: var(--accent); color: white; font-size: 0.85rem;
+            font-weight: 600; border-radius: 20px; padding: 3px 10px;
+        }
+        .request-list .request-item { display: flex; align-items: center; padding: 15px 10px; transition: var(--transition); }
+        .request-list .request-item:not(:last-child) { border-bottom: 1px solid #eee; }
+        .request-list .request-item:hover { background-color: #f8f9fa; }
+        .request-item .mentee-pic { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
+        .request-item .mentee-info { flex-grow: 1; }
+        .mentee-info h5 { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
+        .mentee-info p { font-size: 0.9rem; color: #555; }
+        .request-actions .btn-sm {
+            padding: 6px 15px; font-size: 0.85rem; border-radius: 6px;
+            font-weight: 500; margin-left: 10px;
+        }
+        .request-actions .btn-decline { background: none; border: 1px solid #ccc; color: #555; }
+        .request-actions .btn-decline:hover { background: #eee; border-color: #bbb; }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .home-grid, .profile-grid { grid-template-columns: 1fr; }
+            .home-left-sidebar, .profile-sidebar { position: static; }
+        }
+         @media (max-width: 768px) {
+            .chat-container { grid-template-columns: 1fr; }
+         }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid #e0e0e0;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-user-tie"></i>
+                <span>AlumniConnect</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-page="mentorship">Mentorship</a></li>
+                    <li><a href="#" class="nav-link" data-page="chatroom">Chat Room</a></li>
+                    <li><a href="#" class="nav-link" data-page="profile">Profile</a></li>
+                    <li><a href="#" class="nav-link" data-page="help">Help</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="page-content active-page">
+        <div class="container">
+            <div class="home-grid">
+                <!-- LEFT SIDEBAR -->
+                <div class="home-left-sidebar">
+                    <div class="card home-sidebar-card">
+                        <h4>Filter Posts</h4>
+                        <div class="filter-btn-list">
+                            <button class="filter-btn active" data-filter="all">All Posts</button>
+                            <button class="filter-btn" data-filter="alumni">Alumni</button>
+                            <button class="filter-btn" data-filter="student">Students</button>
+                        </div>
+                    </div>
+                    <div class="card home-sidebar-card">
+                        <h4>Upcoming Events</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-calendar-alt"></i> Alumni Annual Meet - Sep 28</a></li>
+                            <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Career Guidance Webinar - Oct 15</a></li>
+                        </ul>
+                    </div>
+                     <div class="card home-sidebar-card">
+                        <h4>Circulars</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-bullhorn"></i> Notice: Convocation Ceremony</a></li>
+                            <li><a href="#"><i class="fas fa-book"></i> New Library Timings</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MAIN FEED CONTENT -->
+                <div class="home-main-content">
+                    <div class="card create-post-card">
+                         <div class="create-post-body">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Your Profile" class="create-post-profile-img">
+                            <div class="create-post-content">
+                                <textarea placeholder="Share an opportunity or a thought..."></textarea>
+                                <div class="create-post-actions">
+                                    <div class="post-action-buttons">
+                                       <button title="Add Image"><i class="fas fa-image"></i></button>
+                                       <button title="Add Link"><i class="fas fa-link"></i></button>
+                                    </div>
+                                    <button class="btn">Post</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card feed-post" data-author-type="alumni">
+                        <div class="post-header">
+                            <img class="profile-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Priya Singh">
+                            <div class="post-user-info">
+                                <h5>Priya Singh</h5>
+                                <p>UI/UX Designer, Adobe • Alumni</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                             <p class="post-text">Just launched our new accessibility features! It was a team effort, and I'm proud of what we accomplished.</p>
+                             <div class="post-image-container">
+                                <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Team working on a project">
+                             </div>
+                        </div>
+                        <div class="post-footer">
+                            <button class="post-footer-btn"><i class="far fa-thumbs-up"></i><span>Like</span></button>
+                            <button class="post-footer-btn"><i class="far fa-comment-dots"></i><span>Comment</span></button>
+                            <button class="post-footer-btn"><i class="fas fa-share"></i><span>Share</span></button>
+                            <button class="post-footer-btn"><i class="far fa-bookmark"></i><span>Save</span></button>
+                        </div>
+                    </div>
+
+                    <div class="card feed-post" data-author-type="student">
+                        <div class="post-header">
+                            <img class="profile-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Michael Chen">
+                            <div class="post-user-info">
+                                <h5>Michael Chen</h5>
+                                <p>Computer Science, Year 4 • Student</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p class="post-text">Thrilled to have won first place at the National Hackathon with my team! Big thanks to our mentor Rahul Patel for the guidance. #Coding #HackathonWinners</p>
+                        </div>
+                        <div class="post-footer">
+                            <button class="post-footer-btn"><i class="far fa-thumbs-up"></i><span>Like</span></button>
+                            <button class="post-footer-btn"><i class="far fa-comment-dots"></i><span>Comment</span></button>
+                            <button class="post-footer-btn"><i class="fas fa-share"></i><span>Share</span></button>
+                            <button class="post-footer-btn"><i class="far fa-bookmark"></i><span>Save</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="mentorship" class="page-content"><!-- Mentorship Content --></section>
+    
+    <section id="chatroom" class="page-content">
+        <div class="container">
+            <div class="section-title">
+                <h2>Chat Room</h2>
+                <p>Connect directly with mentees and other alumni</p>
+            </div>
+            <div class="chat-container">
+                <div class="chat-sidebar">
+                    <div class="chat-tabs">
+                        <div class="chat-tab active" data-tab="general">General</div>
+                        <div class="chat-tab" data-tab="private">Mentees</div>
+                    </div>
+                    <div class="chat-user-list" style="display: none;">
+                        <div class="chat-user active" data-user="alex">
+                            <div class="profile-img" style="background: var(--teal);"><i class="fas fa-user"></i></div>
+                            <div class="chat-user-info">
+                                <h5>Alex Martinez</h5>
+                                <p>Online</p>
+                            </div>
+                        </div>
+                        <div class="chat-user" data-user="priya">
+                            <div class="profile-img" style="background: var(--secondary);"><i class="fas fa-user"></i></div>
+                            <div class="chat-user-info">
+                                <h5>Priya Sharma</h5>
+                                <p>Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-main">
+                    <div class="chat-content active" data-content="general">
+                        <div class="chat-header"><h4>Alumni & Student Chat</h4></div>
+                        <div class="chat-messages">
+                            <div class="message received">
+                                <div class="message-sender">Alex Martinez (Student)</div>
+                                <div class="message-content"><p>Hello everyone! Does anyone have tips for preparing for technical interviews?</p></div>
+                                <div class="message-time">11:05 AM</div>
+                            </div>
+                            <div class="message sent">
+                                <div class="message-sender">You (Alumni)</div>
+                                <div class="message-content"><p>Hi Alex, great question. I'd recommend practicing on platforms like LeetCode and focusing on data structures. Also, be ready to talk about your projects in detail.</p></div>
+                                <div class="message-time">11:07 AM</div>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message in General...">
+                            <button class="btn btn-accent"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                    <div class="chat-content" data-content="alex">
+                        <div class="chat-header"><h4>Alex Martinez</h4></div>
+                        <div class="chat-messages">
+                            <div class="message sent">
+                                <div class="message-sender">You</div>
+                                <div class="message-content"><p>Hi Alex, I saw your request. I work in AI, happy to help you prepare. What's on your mind?</p></div>
+                                <div class="message-time">9:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message to Alex...">
+                            <button class="btn btn-accent"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                     <div class="chat-content" data-content="priya">
+                        <div class="chat-header"><h4>Priya Sharma</h4></div>
+                        <div class="chat-messages"></div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message to Priya...">
+                            <button class="btn btn-accent"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="profile" class="page-content">
+         <div class="container">
+            <div class="profile-grid">
+                <!-- LEFT SIDEBAR -->
+                <div class="profile-sidebar">
+                    <div class="card profile-summary-card">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80" alt="Alex Thompson" class="profile-pic">
+                        <h3>Alex Thompson</h3>
+                        <p class="batch-info">Batch of 2018 | Computer Science</p>
+                        <p class="job-title">Senior Software Engineer at TechCorp</p>
+                        <div class="profile-social-links">
+                            <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+                            <a href="#" title="Phone"><i class="fas fa-phone"></i></a>
+                        </div>
+                        <button class="btn">Edit Profile</button>
+                    </div>
+                    <div class="card mentor-status-card">
+                        <h4>Mentor Status</h4>
+                        <p>Visible to students seeking mentorship.</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button id="mentor-active-btn" class="btn btn-sm" style="background: var(--success); color: #fff;">Active</button>
+                            <button id="mentor-inactive-btn" class="btn btn-sm btn-decline" style="background: var(--accent); color: #fff;">Inactive</button>
+                        </div>
+                    </div>
+                    <script>
+                        // Mentor status toggle logic
+                        const activeBtn = document.getElementById('mentor-active-btn');
+                        const inactiveBtn = document.getElementById('mentor-inactive-btn');
+
+                        activeBtn.addEventListener('click', function() {
+                            // Set Active button to green, Inactive to grey
+                            activeBtn.style.background = 'var(--success)';
+                            activeBtn.style.color = '#fff';
+                            inactiveBtn.style.background = '#bdc3c7';
+                            inactiveBtn.style.color = '#fff';
+                        });
+
+                        inactiveBtn.addEventListener('click', function() {
+                            // Set Inactive button to red, Active to grey
+                            inactiveBtn.style.background = 'var(--accent)';
+                            inactiveBtn.style.color = '#fff';
+                            activeBtn.style.background = '#bdc3c7';
+                            activeBtn.style.color = '#fff';
+                        });
+                    </script>
+                </div>
+
+                <!-- MAIN CONTENT -->
+                <div class="profile-main">
+                    <div class="card">
+                        <h3>About</h3>
+                        <p class="about-text">Passionate software engineer with 6+ years of experience in full-stack development. Love mentoring junior developers and contributing to open source projects.</p>
+                        <a href="#" class="edit-link" style="margin-top: 15px; display: inline-block;"><i class="fas fa-pen"></i> Edit Bio</a>
+                    </div>
+                    <div class="card">
+                        <h3>Mentorship Requests <span class="request-count">3</span></h3>
+                        <div class="request-list">
+                            <div class="request-item">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Riya" class="mentee-pic">
+                                <div class="mentee-info">
+                                    <h5>Riya - Class of 2024</h5>
+                                    <p>Career Transition to Tech</p>
+                                </div>
+                                <div class="request-actions">
+                                    <button class="btn btn-sm" style="background: var(--success);">Accept</button>
+                                    <button class="btn btn-sm btn-decline">Decline</button>
+                                </div>
+                            </div>
+                            <div class="request-item">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Alice Johnson" class="mentee-pic">
+                                <div class="mentee-info">
+                                    <h5>Alice Johnson - Class of 2023</h5>
+                                    <p>Machine Learning Projects</p>
+                                </div>
+                                <div class="request-actions">
+                                    <button class="btn btn-sm" style="background: var(--success);">Accept</button>
+                                    <button class="btn btn-sm btn-decline">Decline</button>
+                                </div>
+                            </div>
+                             <div class="request-item">
+                                <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="Ravi Kumar" class="mentee-pic">
+                                <div class="mentee-info">
+                                    <h5>Ravi Kumar - Class of 2025</h5>
+                                    <p>Startup & Entrepreneurship</p>
+                                </div>
+                                <div class="request-actions">
+                                    <button class="btn btn-sm" style="background: var(--success);">Accept</button>
+                                    <button class="btn btn-sm btn-decline">Decline</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="help" class="page-content"><!-- Help Content --></section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AlumniConnect. All Rights Reserved.</p>
+        </div>
+    </footer>
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageContents = document.querySelectorAll('.page-content');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const feedPosts = document.querySelectorAll('.feed-post');
+            const chatTabs = document.querySelectorAll('.chat-tab');
+            const chatContents = document.querySelectorAll('.chat-content');
+            const chatUsers = document.querySelectorAll('.chat-user');
+
+            // --- Page Navigation ---
+            function showPage(pageId) {
+                pageContents.forEach(page => page.classList.remove('active-page'));
+                const newPage = document.getElementById(pageId);
+                if (newPage) newPage.classList.add('active-page');
+                
+                navLinks.forEach(link => link.classList.remove('active'));
+                const newLink = document.querySelector(`[data-page="${pageId}"]`);
+                if (newLink) newLink.classList.add('active');
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage(e.currentTarget.dataset.page);
+                });
+            });
+            
+            // --- Feed Filter Logic ---
+            if (filterButtons.length > 0) {
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const filter = button.dataset.filter;
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        feedPosts.forEach(post => {
+                            post.style.display = (filter === 'all' || filter === post.dataset.authorType) ? 'block' : 'none';
+                        });
+                    });
+                });
+            }
+
+            // --- Post Action Button Toggle ---
+            document.querySelectorAll('.post-footer-btn').forEach(button => {
+                button.addEventListener('click', () => button.classList.toggle('active'));
+            });
+            
+            // --- Chat Logic ---
+            if (chatTabs.length > 0) {
+                function switchChatView(target) {
+                    const isTabClick = !!target.dataset.tab;
+                    const tabId = isTabClick ? target.dataset.tab : 'private';
+                    const contentId = isTabClick ? target.dataset.tab : target.dataset.user;
+
+                    chatTabs.forEach(tab => tab.classList.remove('active'));
+                    document.querySelector(`.chat-tab[data-tab="${tabId}"]`).classList.add('active');
+
+                    const userList = document.querySelector('.chat-user-list');
+                    if(userList) {
+                        userList.style.display = (tabId === 'private') ? 'block' : 'none';
+                    }
+                    
+                    if(chatUsers.length > 0) {
+                        chatUsers.forEach(user => user.classList.remove('active'));
+                    }
+                    
+                    if(chatContents.length > 0) {
+                        chatContents.forEach(content => content.classList.remove('active'));
+                    }
+                    
+                    if (isTabClick) {
+                        if (tabId === 'private' && chatUsers.length > 0) {
+                            chatUsers[0].classList.add('active');
+                            const firstUserContent = document.querySelector(`[data-content="${chatUsers[0].dataset.user}"]`);
+                            if(firstUserContent) firstUserContent.classList.add('active');
+                        } else {
+                           const generalContent = document.querySelector(`[data-content="general"]`);
+                           if(generalContent) generalContent.classList.add('active');
+                        }
+                    } else {
+                        target.classList.add('active');
+                        const userContent = document.querySelector(`[data-content="${contentId}"]`);
+                        if(userContent) userContent.classList.add('active');
+                    }
+                }
+
+                chatTabs.forEach(tab => {
+                    tab.addEventListener('click', (e) => switchChatView(e.currentTarget));
+                });
+
+                chatUsers.forEach(user => {
+                    user.addEventListener('click', (e) => switchChatView(e.currentTarget));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
